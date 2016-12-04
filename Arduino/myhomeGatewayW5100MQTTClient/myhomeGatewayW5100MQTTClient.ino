@@ -46,7 +46,7 @@
 
 // MQTT broker ip address or url. Define one or the other.
 //#define MY_CONTROLLER_URL_ADDRESS "m20.cloudmqtt.com"
-#define MY_CONTROLLER_IP_ADDRESS 192,168,0,101
+#define MY_CONTROLLER_IP_ADDRESS 192,168,0,108
 
 // The MQTT broker port to to open
 #define MY_PORT 1883
