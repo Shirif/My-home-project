@@ -1,5 +1,5 @@
 import java.util.Random
-
+var Temperature_house_Living_LastUpdate
 var Timer timer = null
 val resList = newArrayList("640/480", "320/240", "480/360")
 val urlList = newArrayList("http://www.fillmurray.com", "http://www.fillmurray.com/g",
@@ -109,6 +109,14 @@ then
 end
 
 // Creates an item that stores the last update time of this item
+
+rule "Records last Temperature_house_Living update time"
+when
+  Item Weather_Temperature received update
+then
+  postUpdate(Temperature_house_Living_LastUpdate, new DateTimeType())
+end
+
 rule "Records last weather update time"
 when
   Item Weather_Temperature received update

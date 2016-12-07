@@ -1,17 +1,19 @@
-Group house           "Мой дом"      <house>
+Group house          "Мой дом"      <smiley>
 
-Group house_Living     "Зал"         <television> (house)
-Group house_Kitchen    "Кухня"       <kitchen>    (house)
-Group house_Toilet     "Санузел"     <bath>       (house)
-Group house_Corridor   "коридор"     <corridor>   (house)
-Group house_Child      "Детская"     <boy_1>      (house)
-
+Group house_Living    "Зал"         <television>  (house)
+Group house_Kitchen   "Кухня"       <kitchen>     (house)
+Group house_Toilet    "Санузел"     <toilet>      (house)
+Group house_Corridor  "коридор"     <door>        (house)
+Group house_Child     "Детская"     <girl_3>      (house)
+Group house_Balcon    "Балкон"      <vacation>    (house)
 
 Group gFF           "First Floor"   <firstfloor>
 Group gGF           "Ground Floor"  <groundfloor>
 Group gC            "Cellar"        <cellar>
 Group Garden        "Garden"        <garden>
 Group Weather       "Weather"       <sun>
+
+Group Humidity
 
 Group Status
 Group Shutters
@@ -89,8 +91,11 @@ Number Temperature_FF_Bath      "Temperature [%.1f °C]" <temperature>   (Temper
 Number Temperature_FF_Office    "Temperature [%.1f °C]" <temperature>   (Temperature, FF_Office)
 Number Temperature_FF_Child     "Temperature [%.1f °C]" <temperature>   (Temperature, FF_Child)
 Number Temperature_FF_Bed       "Temperature [%.1f °C]" <temperature>   (Temperature, FF_Bed)
+Number Temperature_house_Living "Температура [%.1f °C]" <temperature>   (Temperature, house_Living)  { mqtt="<[mosquitto:mygateway1-out/2/1/1/0/0:state:default]" }
+DateTime Temperature_house_Living_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
 
-Number Temperature_house_Living "Температура [%.1f °C]" <temperature>   (Temperature, house_Living)
+/* Indoor Humidity */
+Number Humidity_house_Living    "Влажность [%.1f %%]" <water>   (Humidity, house_Living)  { mqtt="<[mosquitto:mygateway1-out/2/0/1/0/1:state:default]" }
 
 /* Windows */
 Contact Window_GF_Frontdoor     "Frontdoor [MAP(en.map):%s]"        (GF_Corridor, Windows)
@@ -106,21 +111,15 @@ Contact Window_FF_Office_Door   "Balcony Door [MAP(en.map):%s]"     (FF_Office, 
 Contact Garage_Door             "Garage Door [MAP(en.map):%s]"      (Garden, Windows)
 
 Group Weather_Chart
-Number Weather_Temperature      "Outside Temperature [%.1f °C]" <temperature> (Weather, Weather_Chart) { channel="yahooweather:weather:berlin:temperature" }
+Number Weather_Temperature      "Температура на улице [%.1f °C]" <temperature> (Weather, Weather_Chart) { channel="yahooweather:weather:berlin:temperature" }
 Number Weather_Temp_Max         "Todays Maximum [%.1f °C]"      <temperature> (Weather, Weather_Chart)
 Number Weather_Temp_Min         "Todays Minimum [%.1f °C]"      <temperature> (Weather, Weather_Chart)
-Number Weather_Chart_Period     "Chart Period"
+Number Weather_Chart_Period     "Chart Period"					<line>
 DateTime Weather_LastUpdate     "Last Update [%1$ta %1$tR]"     <clock>
-Number Sun_Elevation            "Sun Elevation"                 <sun>       { channel = "astro:sun:home:position#elevation" }
-Number Sun_Azimuth              "Sun Azimuth"                   <sun>       { channel = "astro:sun:home:position#azimuth" }
-DateTime Sunrise_Time           "Sunrise [%1$tH:%1$tM]"         <sunrise>   { channel = "astro:sun:home:rise#start" }
-DateTime Sunset_Time            "Sunset [%1$tH:%1$tM]"          <sunset>    { channel = "astro:sun:home:set#start" }
-Number Moon_Elevation           "Moon Elevation"                <moon>      { channel = "astro:moon:home:position#elevation" }
-Number Moon_Azimuth             "Moon Azimuth"                  <moon>      { channel = "astro:moon:home:position#azimuth" }
-String Moon_Phase               "Moon Phase"                    <moon>      { channel = "astro:moon:home:phase#name" }
+
 
 /* Demo items */
-DateTime CurrentDate            "Date [%1$tA, %1$td.%1$tm.%1$tY]"   <calendar>  { channel="ntp:ntp:demo:dateTime" }
+DateTime CurrentDate            "Date [%1$tH:%1$tM  %1$tA, %1$td.%1$tm.%1$tY]"   <calendar>  { channel="ntp:ntp:demo:dateTime" }
 Switch DemoSwitch               "Switch"
 Dimmer DimmedLight              "Dimmer [%d %%]"        <slider>
 Color  RGBLight                 "RGB Light"             <slider>
