@@ -1,0 +1,12 @@
+// Creates an item that stores the last update time of this item
+
+rule "Records last Temperature_house_Living update time"
+when
+  Item Temperature_house_Living received update or
+  Item Humidity_house_Living received update
+then
+  postUpdate(house_Living_LastUpdate, new DateTimeType())
+end
+
+
+// vim: syntax=Xtend syntax=openhab

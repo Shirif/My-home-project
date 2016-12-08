@@ -1,0 +1,37 @@
+sitemap myhome label="Основное меню"
+{
+		Frame {	
+			Group item=house label="Датчики помещений" icon="chart"{
+			
+			Group item=house_Living{
+			Frame {
+				Text item=Temperature_house_Living valuecolor=[>28="red",>26="orange",>22="green",>18="teal",<=18="blue"]
+				Text item=Humidity_house_Living valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=house_Living_LastUpdate visibility=[house_Living_LastUpdate>30] valuecolor=[house_Living_LastUpdate>120="orange", house_Living_LastUpdate>300="red"]
+			}
+			Frame {
+				Switch item=Chart_Period label="" mappings=[0="Час", 1="День", 2="Неделя", 3="Месяц"]
+				Chart item=house_Living period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=house_Living period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=house_Living period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=house_Living period=M refresh=3600 visibility=[Chart_Period==3]
+			}
+			}
+			Group item=house_Child
+				
+			Group item=house_Kitchen
+			
+			Group item=house_Corridor
+			
+			Group item=house_Toilet
+			
+			Group item=house_Balcon
+			
+			}
+			}
+		Frame {
+			Text item=CurrentDate
+			}
+
+	}
+// vim: syntax=Xtend syntax=openhab

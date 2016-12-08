@@ -1,0 +1,33 @@
+Group house          "Мой дом"      <smiley>
+
+Group house_Living    "Зал"         <television>  (house)
+Group house_Kitchen   "Кухня"       <kitchen>     (house)
+Group house_Toilet    "Санузел"     <toilet>      (house)
+Group house_Corridor  "коридор"     <door>        (house)
+Group house_Child     "Детская"     <girl_3>      (house)
+Group house_Balcon    "Балкон"      <vacation>    (house)
+
+Group Humidity
+Group Temperature
+
+/*DateTime*/
+DateTime house_Living_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
+
+/* Indoor Temperatures */
+Number Temperature_house_Living "Температура [%.1f °C]" <temperature>   (Temperature, house_Living)  { mqtt="<[mosquitto:mygateway1-out/2/1/1/0/0:state:default]" }
+
+/* Indoor Humidity */
+Number Humidity_house_Living    "Влажность [%.1f %%]" <water>   (Humidity, house_Living)  { mqtt="<[mosquitto:mygateway1-out/2/0/1/0/1:state:default]" }
+
+
+
+Group Chart
+Number Chart_Period     "Chart Period"					<none>
+
+
+
+/* Demo items */
+DateTime CurrentDate            "Date [%1$tH:%1$tM  %1$tA, %1$td.%1$tm.%1$tY]"   <calendar>  { channel="ntp:ntp:demo:dateTime" }
+Number Wifi_Level               "Wifi Level [%d/4]"     <signal>        (FF_Office)
+
+// vim: syntax=Xtend syntax=openhab
