@@ -77,8 +77,6 @@
 #include <DHT.h>
 
 
-
-
 // Set this to the pin you connected the DHT's data pin to
 #define DHT_DATA_PIN 30
 
@@ -87,7 +85,7 @@
 
 // Sleep time between sensor updates (in milliseconds)
 // Must be >1000ms for DHT22 and >2000ms for DHT11
-static const uint64_t UPDATE_INTERVAL = 3000;
+static const uint64_t UPDATE_INTERVAL = 6000;
 
 // Force sending an update of the temperature after n sensor reads, so a controller showing the
 // timestamp of the last update doesn't show something like 3 hours in the unlikely case, that
@@ -96,6 +94,10 @@ static const uint64_t UPDATE_INTERVAL = 3000;
 static const uint8_t FORCE_UPDATE_N_READS = 10;
 
 
+// Sleep time between reads (in milliseconds)
+unsigned long SLEEP_TIME = 60000; 
+
+unsigned long T = 1;
 
 
 
@@ -117,7 +119,7 @@ uint8_t nNoUpdatesHum;
 bool metric = true;
 
 int lastLightLevel;
-
+bool lastTripped;
 
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
@@ -150,7 +152,7 @@ void setup()
   sleep(dht.getMinimumSamplingPeriod());
 
   pinMode(DIGITAL_INPUT_SENSOR, INPUT);      // sets the motion sensor digital pin as input
-
+  //attachInterrupt(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), loop, CHANGE);
 }
 
 
@@ -160,23 +162,31 @@ void loop()
 
 // Read digital motion value
   boolean tripped = digitalRead(DIGITAL_INPUT_SENSOR) == HIGH; 
-        
+  
+  if (tripped != lastTripped) {     
+  Serial.print("tripped: ");
   Serial.println(tripped);
   send(msgMot.set(tripped?"1":"0"));  // Send tripped value to gw 
-  
+  lastTripped = tripped;
+  }
  
 
 
 
 // Read analog light value
   int lightLevel = (1023-analogRead(LIGHT_SENSOR_ANALOG_PIN))/10.23; 
-  Serial.println(lightLevel);
-  if (lightLevel != lastLightLevel) {
+  
+  if (lightLevel != lastLightLevel && lightLevel != lastLightLevel+1 && lightLevel != lastLightLevel-1 && lightLevel != lastLightLevel+2 && lightLevel != lastLightLevel-2) {
       send(msgLight.set(lightLevel));
       lastLightLevel = lightLevel;
+      Serial.print("lightLevel: ");
+      Serial.println(lightLevel);
   }
   
-
+T++;
+  if (T > SLEEP_TIME) {
+    T = 1;
+      
  // Force reading sensor, so it works also after sleep()
   dht.readSensor(true);
   
@@ -223,12 +233,11 @@ void loop()
     // Increase no update counter if the humidity stayed the same
     nNoUpdatesHum++;
   }
-  
-
+  }
+  //delay(3000);
   // Sleep for a while
-  sleep(UPDATE_INTERVAL); 
- 
+  //sleep(UPDATE_INTERVAL);
+  //sleep(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), CHANGE, UPDATE_INTERVAL);
 }
-
 
 

@@ -9,17 +9,23 @@ Group house_Balcon    "Балкон"      <vacation>    (house)
 
 Group Humidity
 Group Temperature
+Group Light
+Group Motion
 
 /*DateTime*/
 DateTime house_Living_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
 
 /* Indoor Temperatures */
-Number Temperature_house_Living "Температура [%.1f °C]" <temperature>   (Temperature, house_Living)  { mqtt="<[mosquitto:mygateway1-out/2/1/1/0/0:state:default]" }
+Number Temperature_house_Living "Температура [%.1f °C]" <temperature>   (Temperature, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/1/1/0/0:state:default]" }
 
 /* Indoor Humidity */
-Number Humidity_house_Living    "Влажность [%.1f %%]" <water>   (Humidity, house_Living)  { mqtt="<[mosquitto:mygateway1-out/2/0/1/0/1:state:default]" }
+Number Humidity_house_Living    "Влажность [%.1f %%]" <water>   (Humidity, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/0/1/0/1:state:default]" }
 
+/* Indoor Light */
+Number Light_house_Living    "Освещенность [%.1f %%]" <sun>   (Light, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/3/1/0/23:state:default]" }
 
+/* Indoor Motion */
+Number Motion_house_Living    "Движение [%.1f %%]" <motion>   (Motion, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/2/1/0/16:state:default]" }
 
 Group Chart
 Number Chart_Period     "Chart Period"					<none>

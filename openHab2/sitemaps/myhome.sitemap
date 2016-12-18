@@ -7,6 +7,8 @@ sitemap myhome label="Основное меню"
 			Frame {
 				Text item=Temperature_house_Living valuecolor=[>28="red",>26="orange",>22="green",>18="teal",<=18="blue"]
 				Text item=Humidity_house_Living valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Light_house_Living valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Motion_house_Living valuecolor=[0="green",1="red"]
 				Text item=house_Living_LastUpdate visibility=[house_Living_LastUpdate>30] valuecolor=[house_Living_LastUpdate>120="orange", house_Living_LastUpdate>300="red"]
 			}
 			Frame {
