@@ -171,21 +171,20 @@ void loop()
   }
  
 
-
-
-// Read analog light value
+  
+T++;
+  if (T > SLEEP_TIME) {
+    T = 1;
+ 
+ // Read analog light value
   int lightLevel = (1023-analogRead(LIGHT_SENSOR_ANALOG_PIN))/10.23; 
   
-  if (lightLevel != lastLightLevel && lightLevel != lastLightLevel+1 && lightLevel != lastLightLevel-1 && lightLevel != lastLightLevel+2 && lightLevel != lastLightLevel-2) {
+  if (lightLevel != lastLightLevel) {
       send(msgLight.set(lightLevel));
       lastLightLevel = lightLevel;
       Serial.print("lightLevel: ");
       Serial.println(lightLevel);
   }
-  
-T++;
-  if (T > SLEEP_TIME) {
-    T = 1;
       
  // Force reading sensor, so it works also after sleep()
   dht.readSensor(true);
@@ -234,8 +233,7 @@ T++;
     nNoUpdatesHum++;
   }
   }
-  //delay(3000);
-  // Sleep for a while
+    // Sleep for a while
   //sleep(UPDATE_INTERVAL);
   //sleep(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), CHANGE, UPDATE_INTERVAL);
 }
