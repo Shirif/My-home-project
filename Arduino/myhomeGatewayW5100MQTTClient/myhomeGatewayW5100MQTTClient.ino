@@ -76,6 +76,15 @@
 #include <MySensors.h>
 #include <DHT.h>
 
+//**********************************
+//#include <NewRemoteTransmitter.h>
+//#include <RemoteReceiver.h>
+//#include <NewRemoteReceiver.h>
+//#include <SensorReceiver.h>
+#include <InterruptChain.h>
+//**********************************
+
+
 
 // Set this to the pin you connected the DHT's data pin to
 #define DHT_DATA_PIN 30
@@ -153,6 +162,7 @@ void setup()
 
   pinMode(DIGITAL_INPUT_SENSOR, INPUT);      // sets the motion sensor digital pin as input
   //attachInterrupt(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), loop, CHANGE);
+   
 }
 
 
@@ -237,5 +247,4 @@ T++;
   //sleep(UPDATE_INTERVAL);
   //sleep(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), CHANGE, UPDATE_INTERVAL);
 }
-
 
