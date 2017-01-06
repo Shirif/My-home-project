@@ -8,5 +8,28 @@ then
   postUpdate(house_Living_LastUpdate, new DateTimeType())
 end
 
+rule "Records last Temperature_house_Child update time"
+when
+  Item Temperature_house_Child received update or
+  Item Humidity_house_Child received update
+then
+  postUpdate(house_Child_LastUpdate, new DateTimeType())
+end
+
+rule "Records last Temperature_house_Kitchen update time"
+when
+  Item Temperature_house_Kitchen received update or
+  Item Humidity_house_Kitchen received update
+then
+  postUpdate(house_Kitchen_LastUpdate, new DateTimeType())
+end
+
+rule "Records last Temperature_house_Corridor update time"
+when
+  Item Temperature_house_Corridor received update or
+  Item Humidity_house_Corridor received update
+then
+  postUpdate(house_Corridor_LastUpdate, new DateTimeType())
+end
 
 // vim: syntax=Xtend syntax=openhab

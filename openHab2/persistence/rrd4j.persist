@@ -6,9 +6,9 @@ Strategies {
 
 Items {
 	//DemoSwitch,NoOfLights,Window_GF_Toilet,Heating* : strategy = everyChange, everyMinute, restoreOnStartup
-	
+	Motion* : strategy = everyChange
 	// let's only store temperature values in rrd
-	Temperature*,Humidity*,Light*,Motion*,Weather_Chart* : strategy = everyMinute, restoreOnStartup
+	Temperature*,Humidity*,Light*,Weather_Chart* : strategy = everyMinute, restoreOnStartup
 }
 
 // vim: syntax=Xtend syntax=openhab

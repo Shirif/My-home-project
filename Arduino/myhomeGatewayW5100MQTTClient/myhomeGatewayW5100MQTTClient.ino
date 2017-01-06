@@ -51,118 +51,140 @@
 // The MQTT broker port to to open
 #define MY_PORT 1883
 
-/*
-  // Flash leds on rx/tx/err
-  #define MY_LEDS_BLINKING_FEATURE
-  // Set blinking period
-  #define MY_DEFAULT_LED_BLINK_PERIOD 300
-
-  // Enable inclusion mode
-  #define MY_INCLUSION_MODE_FEATURE
-  // Enable Inclusion mode button on gateway
-  #define MY_INCLUSION_BUTTON_FEATURE
-  // Set inclusion mode duration (in seconds)
-  #define MY_INCLUSION_MODE_DURATION 60
-  // Digital pin used for inclusion mode button
-  #define MY_INCLUSION_MODE_BUTTON_PIN  3
-
-  // Uncomment to override default HW configurations
-  //#define MY_DEFAULT_ERR_LED_PIN 16  // Error led pin
-  //#define MY_DEFAULT_RX_LED_PIN  16  // Receive led pin
-  //#define MY_DEFAULT_TX_LED_PIN  16  // the PCB, on board LED
-*/
-
 #include <Ethernet.h>
 #include <MySensors.h>
 #include <DHT.h>
 
-//**********************************
-//#include <NewRemoteTransmitter.h>
-//#include <RemoteReceiver.h>
-//#include <NewRemoteReceiver.h>
-//#include <SensorReceiver.h>
-#include <InterruptChain.h>
-//**********************************
-
-
-
 // Set this to the pin you connected the DHT's data pin to
-#define DHT_DATA_PIN 30
-
-// Set this offset if the sensor has a permanent small offset to the real temperatures
-#define SENSOR_TEMP_OFFSET 0
-
-// Sleep time between sensor updates (in milliseconds)
-// Must be >1000ms for DHT22 and >2000ms for DHT11
-static const uint64_t UPDATE_INTERVAL = 6000;
-
-// Force sending an update of the temperature after n sensor reads, so a controller showing the
-// timestamp of the last update doesn't show something like 3 hours in the unlikely case, that
-// the value didn't change since;
-// i.e. the sensor would force sending an update every UPDATE_INTERVAL*FORCE_UPDATE_N_READS [ms]
-static const uint8_t FORCE_UPDATE_N_READS = 10;
-
+#define DHT_DATA_PIN1 30
+#define DHT_DATA_PIN2 32
+#define DHT_DATA_PIN3 34
+#define DHT_DATA_PIN4 36
 
 // Sleep time between reads (in milliseconds)
-unsigned long SLEEP_TIME = 60000; 
+unsigned long SLEEP_TIME = 120000;
 
 unsigned long T = 1;
 
+#define CHILD_ID_HUM1 0
+#define CHILD_ID_HUM2 1
+#define CHILD_ID_HUM3 2
+#define CHILD_ID_HUM4 3
 
+#define CHILD_ID_TEMP1 4
+#define CHILD_ID_TEMP2 5
+#define CHILD_ID_TEMP3 6
+#define CHILD_ID_TEMP4 7
 
-#define CHILD_ID_HUM 0
-#define CHILD_ID_TEMP 1
+#define CHILD_ID_MOT1 8
+#define CHILD_ID_MOT2 9
+#define CHILD_ID_MOT3 10
+#define CHILD_ID_MOT4 11
 
-#define CHILD_ID_MOT 2
+#define CHILD_ID_LIGHT1 12
+#define CHILD_ID_LIGHT2 13
+#define CHILD_ID_LIGHT3 14
+#define CHILD_ID_LIGHT4 15
 
-#define CHILD_ID_LIGHT 3
+#define DIGITAL_INPUT_SENSOR1 21   // The digital input you attached your motion sensor
+#define DIGITAL_INPUT_SENSOR2 20   // The digital input you attached your motion sensor
+#define DIGITAL_INPUT_SENSOR3 19   // The digital input you attached your motion sensor
+#define DIGITAL_INPUT_SENSOR4 18   // The digital input you attached your motion sensor
 
-#define DIGITAL_INPUT_SENSOR 21   // The digital input you attached your motion sensor.  (Only 2 and 3 generates interrupt!)
+#define LIGHT_SENSOR_ANALOG_PIN1 62
+#define LIGHT_SENSOR_ANALOG_PIN2 63
+#define LIGHT_SENSOR_ANALOG_PIN3 64
+#define LIGHT_SENSOR_ANALOG_PIN4 65
 
-#define LIGHT_SENSOR_ANALOG_PIN 62
+float lastTemp1;
+float lastTemp2;
+float lastTemp3;
+float lastTemp4;
 
-float lastTemp;
-float lastHum;
-uint8_t nNoUpdatesTemp;
-uint8_t nNoUpdatesHum;
+float lastHum1;
+float lastHum2;
+float lastHum3;
+float lastHum4;
+
+int lastLightLevel1;
+int lastLightLevel2;
+int lastLightLevel3;
+int lastLightLevel4;
+
+bool lastTripped1;
+bool lastTripped2;
+bool lastTripped3;
+bool lastTripped4;
+
 bool metric = true;
 
-int lastLightLevel;
-bool lastTripped;
+MyMessage msgHum1(CHILD_ID_HUM1, V_HUM);
+MyMessage msgHum2(CHILD_ID_HUM2, V_HUM);
+MyMessage msgHum3(CHILD_ID_HUM3, V_HUM);
+MyMessage msgHum4(CHILD_ID_HUM4, V_HUM);
 
-MyMessage msgHum(CHILD_ID_HUM, V_HUM);
-MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
-MyMessage msgMot(CHILD_ID_MOT, V_TRIPPED);
-MyMessage msgLight(CHILD_ID_LIGHT, V_LIGHT_LEVEL);
-DHT dht;
+MyMessage msgTemp1(CHILD_ID_TEMP1, V_TEMP);
+MyMessage msgTemp2(CHILD_ID_TEMP2, V_TEMP);
+MyMessage msgTemp3(CHILD_ID_TEMP3, V_TEMP);
+MyMessage msgTemp4(CHILD_ID_TEMP4, V_TEMP);
+
+MyMessage msgMot1(CHILD_ID_MOT1, V_TRIPPED);
+MyMessage msgMot2(CHILD_ID_MOT2, V_TRIPPED);
+MyMessage msgMot3(CHILD_ID_MOT3, V_TRIPPED);
+MyMessage msgMot4(CHILD_ID_MOT4, V_TRIPPED);
+
+MyMessage msgLight1(CHILD_ID_LIGHT1, V_LIGHT_LEVEL);
+MyMessage msgLight2(CHILD_ID_LIGHT2, V_LIGHT_LEVEL);
+MyMessage msgLight3(CHILD_ID_LIGHT3, V_LIGHT_LEVEL);
+MyMessage msgLight4(CHILD_ID_LIGHT4, V_LIGHT_LEVEL);
+
+DHT dht1;
+DHT dht2;
+DHT dht3;
+DHT dht4;
 
 void presentation() {
 
   // Send the Sketch Version Information to the Gateway
-  sendSketchInfo("3-1 Sensor", "1.0");
+  sendSketchInfo("12-1 Sensor", "1.0");
 
   // Register all sensors to gw (they will be created as child devices)
-  present(CHILD_ID_HUM, S_HUM);
-  present(CHILD_ID_TEMP, S_TEMP);
-  present(CHILD_ID_MOT, S_MOTION);
-  present(CHILD_ID_LIGHT, S_LIGHT_LEVEL);
+  present(CHILD_ID_HUM1, S_HUM);
+  present(CHILD_ID_HUM2, S_HUM);
+  present(CHILD_ID_HUM3, S_HUM);
+  present(CHILD_ID_HUM4, S_HUM);
+  present(CHILD_ID_TEMP1, S_TEMP);
+  present(CHILD_ID_TEMP2, S_TEMP);
+  present(CHILD_ID_TEMP3, S_TEMP);
+  present(CHILD_ID_TEMP4, S_TEMP);
+  present(CHILD_ID_MOT1, S_MOTION);
+  present(CHILD_ID_MOT2, S_MOTION);
+  present(CHILD_ID_MOT3, S_MOTION);
+  present(CHILD_ID_MOT4, S_MOTION);
+  present(CHILD_ID_LIGHT1, S_LIGHT_LEVEL);
+  present(CHILD_ID_LIGHT2, S_LIGHT_LEVEL);
+  present(CHILD_ID_LIGHT3, S_LIGHT_LEVEL);
+  present(CHILD_ID_LIGHT4, S_LIGHT_LEVEL);
 
   metric = getConfig().isMetric;
 }
 
 void setup()
 {
-  dht.setup(DHT_DATA_PIN); // set data pin of DHT sensor
-  if (UPDATE_INTERVAL <= dht.getMinimumSamplingPeriod()) {
-    Serial.println("Warning: UPDATE_INTERVAL is smaller than supported by the sensor!");
-  }
-  // Sleep for the time of the minimum sampling period to give the sensor time to power up
-  // (otherwise, timeout errors might occure for the first reading)
-  sleep(dht.getMinimumSamplingPeriod());
+  dht1.setup(DHT_DATA_PIN1);
+  dht2.setup(DHT_DATA_PIN2);
+  dht3.setup(DHT_DATA_PIN3);
+  dht4.setup(DHT_DATA_PIN4);
 
-  pinMode(DIGITAL_INPUT_SENSOR, INPUT);      // sets the motion sensor digital pin as input
-  //attachInterrupt(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), loop, CHANGE);
-   
+  sleep(dht1.getMinimumSamplingPeriod());
+
+  pinMode(DIGITAL_INPUT_SENSOR1, INPUT);
+  pinMode(DIGITAL_INPUT_SENSOR2, INPUT);
+  pinMode(DIGITAL_INPUT_SENSOR3, INPUT);
+  pinMode(DIGITAL_INPUT_SENSOR4, INPUT);
+
+  //attachInterrupt(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR1), loop, CHANGE);
+
 }
 
 
@@ -170,81 +192,179 @@ void setup()
 void loop()
 {
 
-// Read digital motion value
-  boolean tripped = digitalRead(DIGITAL_INPUT_SENSOR) == HIGH; 
-  
-  if (tripped != lastTripped) {     
-  Serial.print("tripped: ");
-  Serial.println(tripped);
-  send(msgMot.set(tripped?"1":"0"));  // Send tripped value to gw 
-  lastTripped = tripped;
-  }
- 
+  // Read digital motion value
 
-  
-T++;
+  boolean tripped1 = digitalRead(DIGITAL_INPUT_SENSOR1) == HIGH;
+  if (tripped1 != lastTripped1) {
+    Serial.print("tripped 1: ");
+    Serial.println(tripped1);
+    send(msgMot1.set(tripped1 ? "1" : "0")); // Send tripped value to gw
+    lastTripped1 = tripped1;
+  }
+
+  boolean tripped2 = digitalRead(DIGITAL_INPUT_SENSOR2) == HIGH;
+  if (tripped2 != lastTripped2) {
+    Serial.print("tripped 2: ");
+    Serial.println(tripped2);
+    send(msgMot2.set(tripped2 ? "1" : "0")); // Send tripped value to gw
+    lastTripped2 = tripped2;
+  }
+
+  boolean tripped3 = digitalRead(DIGITAL_INPUT_SENSOR3) == HIGH;
+  if (tripped3 != lastTripped3) {
+    Serial.print("tripped 3: ");
+    Serial.println(tripped3);
+    send(msgMot3.set(tripped3 ? "1" : "0")); // Send tripped value to gw
+    lastTripped3 = tripped3;
+  }
+
+  boolean tripped4 = digitalRead(DIGITAL_INPUT_SENSOR4) == HIGH;
+  if (tripped4 != lastTripped4) {
+    Serial.print("tripped 4: ");
+    Serial.println(tripped4);
+    send(msgMot4.set(tripped4 ? "1" : "0")); // Send tripped value to gw
+    lastTripped4 = tripped4;
+  }
+
+
+  T++;
   if (T > SLEEP_TIME) {
     T = 1;
- 
- // Read analog light value
-  int lightLevel = (1023-analogRead(LIGHT_SENSOR_ANALOG_PIN))/10.23; 
-  
-  if (lightLevel != lastLightLevel) {
-      send(msgLight.set(lightLevel));
-      lastLightLevel = lightLevel;
-      Serial.print("lightLevel: ");
-      Serial.println(lightLevel);
-  }
-      
- // Force reading sensor, so it works also after sleep()
-  dht.readSensor(true);
-  
- // Get temperature from DHT library
-  float temperature = dht.getTemperature();
-  if (isnan(temperature)) {
-    Serial.println("Failed reading temperature from DHT!");
-  } else if (temperature != lastTemp || nNoUpdatesTemp == FORCE_UPDATE_N_READS) {
-    // Only send temperature if it changed since the last measurement or if we didn't send an update for n times
-    lastTemp = temperature;
-    if (!metric) {
-      temperature = dht.toFahrenheit(temperature);
+
+    // Read analog light value
+
+    int lightLevel1 = (analogRead(LIGHT_SENSOR_ANALOG_PIN1)) / 10.23;
+    if (lightLevel1 != lastLightLevel1) {
+      send(msgLight1.set(lightLevel1));
+      lastLightLevel1 = lightLevel1;
+      Serial.print("lightLevel 1: ");
+      Serial.println(lightLevel1);
     }
-    // Reset no updates counter
-    nNoUpdatesTemp = 0;
-    temperature += SENSOR_TEMP_OFFSET;
-    send(msgTemp.set(temperature, 1));
 
-    #ifdef MY_DEBUG
-    Serial.print("T: ");
-    Serial.println(temperature);
-    #endif
-  } else {
-    // Increase no update counter if the temperature stayed the same
-    nNoUpdatesTemp++;
+    int lightLevel2 = (analogRead(LIGHT_SENSOR_ANALOG_PIN2)) / 10.23;
+    if (lightLevel2 != lastLightLevel2) {
+      send(msgLight2.set(lightLevel2));
+      lastLightLevel2 = lightLevel2;
+      Serial.print("lightLevel 2: ");
+      Serial.println(lightLevel2);
+    }
+
+    int lightLevel3 = (analogRead(LIGHT_SENSOR_ANALOG_PIN3)) / 10.23;
+    if (lightLevel3 != lastLightLevel3) {
+      send(msgLight3.set(lightLevel3));
+      lastLightLevel3 = lightLevel3;
+      Serial.print("lightLevel 3: ");
+      Serial.println(lightLevel3);
+    }
+
+    int lightLevel4 = (analogRead(LIGHT_SENSOR_ANALOG_PIN4)) / 10.23;
+    if (lightLevel4 != lastLightLevel4) {
+      send(msgLight4.set(lightLevel4));
+      lastLightLevel4 = lightLevel4;
+      Serial.print("lightLevel 4: ");
+      Serial.println(lightLevel4);
+    }
+
+     float temperature1 = dht1.getTemperature();
+    if (isnan(temperature1)) {
+      Serial.println("Failed reading temperature from DHT1!");
+    } else if (temperature1 != lastTemp1) {
+      lastTemp1 = temperature1;
+      if (!metric) {
+        temperature1 = dht1.toFahrenheit(temperature1);
+      }
+      send(msgTemp1.set(temperature1, 1));
+      Serial.print("T1: ");
+      Serial.println(temperature1);
+    }
+
+    float humidity1 = dht1.getHumidity();
+    if (isnan(humidity1)) {
+      Serial.println("Failed reading humidity from DHT1");
+    } else if (humidity1 != lastHum1) {
+      lastHum1 = humidity1;
+      send(msgHum1.set(humidity1, 1));
+      Serial.print("H1: ");
+      Serial.println(humidity1);
+    }
+
+
+
+    float temperature2 = dht2.getTemperature();
+    if (isnan(temperature2)) {
+      Serial.println("Failed reading temperature from DHT2!");
+    } else if (temperature2 != lastTemp2) {
+      lastTemp2 = temperature2;
+      if (!metric) {
+        temperature2 = dht2.toFahrenheit(temperature2);
+      }
+      send(msgTemp2.set(temperature2, 1));
+      Serial.print("T2: ");
+      Serial.println(temperature2);
+    }
+
+    float humidity2 = dht2.getHumidity();
+    if (isnan(humidity2)) {
+      Serial.println("Failed reading humidity from DHT2");
+    } else if (humidity2 != lastHum2) {
+      lastHum2 = humidity2;
+      send(msgHum2.set(humidity2, 1));
+      Serial.print("H2: ");
+      Serial.println(humidity2);
+    }
+
+
+    float temperature3 = dht3.getTemperature();
+    if (isnan(temperature3)) {
+      Serial.println("Failed reading temperature from DHT3!");
+    } else if (temperature3 != lastTemp3) {
+      lastTemp3 = temperature3;
+      if (!metric) {
+        temperature3 = dht3.toFahrenheit(temperature3);
+      }
+      send(msgTemp3.set(temperature3, 1));
+      Serial.print("T3: ");
+      Serial.println(temperature3);
+    }
+
+    float humidity3 = dht3.getHumidity();
+    if (isnan(humidity3)) {
+      Serial.println("Failed reading humidity from DHT3");
+    } else if (humidity3 != lastHum3) {
+      lastHum3 = humidity3;
+      send(msgHum3.set(humidity3, 1));
+      Serial.print("H3: ");
+      Serial.println(humidity3);
+    }
+
+
+
+    float temperature4 = dht4.getTemperature();
+    if (isnan(temperature4)) {
+      Serial.println("Failed reading temperature from DHT4!");
+    } else if (temperature4 != lastTemp4) {
+      lastTemp4 = temperature4;
+      if (!metric) {
+        temperature4 = dht4.toFahrenheit(temperature4);
+      }
+      send(msgTemp4.set(temperature4, 1));
+      Serial.print("T4: ");
+      Serial.println(temperature4);
+    }
+
+    float humidity4 = dht4.getHumidity();
+    if (isnan(humidity4)) {
+      Serial.println("Failed reading humidity from DHT4");
+    } else if (humidity4 != lastHum4) {
+      lastHum4 = humidity4;
+      send(msgHum4.set(humidity4, 1));
+      Serial.print("H4: ");
+      Serial.println(humidity4);
+    }
+
   }
 
-  // Get humidity from DHT library
-  float humidity = dht.getHumidity();
-  if (isnan(humidity)) {
-    Serial.println("Failed reading humidity from DHT");
-  } else if (humidity != lastHum || nNoUpdatesHum == FORCE_UPDATE_N_READS) {
-    // Only send humidity if it changed since the last measurement or if we didn't send an update for n times
-    lastHum = humidity;
-    // Reset no updates counter
-    nNoUpdatesHum = 0;
-    send(msgHum.set(humidity, 1));
-    
-    #ifdef MY_DEBUG
-    Serial.print("H: ");
-    Serial.println(humidity);
-    #endif
-  } else {
-    // Increase no update counter if the humidity stayed the same
-    nNoUpdatesHum++;
-  }
-  }
-    // Sleep for a while
   //sleep(UPDATE_INTERVAL);
-  //sleep(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR), CHANGE, UPDATE_INTERVAL);
+  //sleep(digitalPinToInterrupt(DIGITAL_INPUT_SENSOR1), CHANGE, UPDATE_INTERVAL);
 }
 

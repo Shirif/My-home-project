@@ -14,18 +14,33 @@ Group Motion
 
 /*DateTime*/
 DateTime house_Living_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
+DateTime house_Child_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
+DateTime house_Kitchen_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
+DateTime house_Corridor_LastUpdate     "обновление [%1$ta %1$tR]"     <clock>
 
 /* Indoor Temperatures */
-Number Temperature_house_Living "Температура [%.1f °C]" <temperature>   (Temperature, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/1/1/0/0:state:default]" }
+Number Temperature_house_Living "Температура зал [%.1f °C]" <temperature>   (Temperature, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/4/1/0/0:state:default]" }
+Number Temperature_house_Child "Температура детская [%.1f °C]" <temperature>   (Temperature, house_Child)  { mqtt="<[mosquitto:mygateway1-out/0/5/1/0/0:state:default]" }
+Number Temperature_house_Kitchen "Температура кухня [%.1f °C]" <temperature>   (Temperature, house_Kitchen)  { mqtt="<[mosquitto:mygateway1-out/0/6/1/0/0:state:default]" }
+Number Temperature_house_Corridor "Температура коридор [%.1f °C]" <temperature>   (Temperature, house_Corridor)  { mqtt="<[mosquitto:mygateway1-out/0/7/1/0/0:state:default]" }
 
 /* Indoor Humidity */
-Number Humidity_house_Living    "Влажность [%.1f %%]" <water>   (Humidity, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/0/1/0/1:state:default]" }
+Number Humidity_house_Living    "Влажность зал [%.1f %%]" <water>   (Humidity, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/0/1/0/1:state:default]" }
+Number Humidity_house_Child    "Влажность детская[%.1f %%]" <water>   (Humidity, house_Child)  { mqtt="<[mosquitto:mygateway1-out/0/1/1/0/1:state:default]" }
+Number Humidity_house_Kitchen    "Влажность кухня [%.1f %%]" <water>   (Humidity, house_Kitchen)  { mqtt="<[mosquitto:mygateway1-out/0/2/1/0/1:state:default]" }
+Number Humidity_house_Corridor    "Влажность коридор[%.1f %%]" <water>   (Humidity, house_Corridor)  { mqtt="<[mosquitto:mygateway1-out/0/3/1/0/1:state:default]" }
 
 /* Indoor Light */
-Number Light_house_Living    "Освещенность [%.1f %%]" <sun>   (Light, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/3/1/0/23:state:default]" }
+Number Light_house_Living    "Освещенность зал[%.1f %%]" <sun>   (Light, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/12/1/0/23:state:default]" }
+Number Light_house_Child    "Освещенность детская[%.1f %%]" <sun>   (Light, house_Child)  { mqtt="<[mosquitto:mygateway1-out/0/13/1/0/23:state:default]" }
+Number Light_house_Kitchen    "Освещенность кухня[%.1f %%]" <sun>   (Light, house_Kitchen)  { mqtt="<[mosquitto:mygateway1-out/0/14/1/0/23:state:default]" }
+Number Light_house_Corridor    "Освещенность коридор[%.1f %%]" <sun>   (Light, house_Corridor)  { mqtt="<[mosquitto:mygateway1-out/0/15/1/0/23:state:default]" }
 
 /* Indoor Motion */
-Number Motion_house_Living    "Движение [%.1f %%]" <motion>   (Motion, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/2/1/0/16:state:default]" }
+Number Motion_house_Living    "Движение зал[%.1f %%]" <motion>   (Motion, house_Living)  { mqtt="<[mosquitto:mygateway1-out/0/8/1/0/16:state:default]" }
+Number Motion_house_Child    "Движение детская[%.1f %%]" <motion>   (Motion, house_Child)  { mqtt="<[mosquitto:mygateway1-out/0/9/1/0/16:state:default]" }
+Number Motion_house_Kitchen    "Движение кухня[%.1f %%]" <motion>   (Motion, house_Kitchen)  { mqtt="<[mosquitto:mygateway1-out/0/10/1/0/16:state:default]" }
+Number Motion_house_Corridor    "Движение коридор[%.1f %%]" <motion>   (Motion, house_Corridor)  { mqtt="<[mosquitto:mygateway1-out/0/11/1/0/16:state:default]" }
 
 Group Chart
 Number Chart_Period     "Chart Period"					<none>

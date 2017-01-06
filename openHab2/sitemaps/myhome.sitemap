@@ -2,7 +2,7 @@ sitemap myhome label="Основное меню"
 {
 		Frame {	
 			Group item=house label="Датчики помещений" icon="chart"{
-			
+				
 			Group item=house_Living{
 			Frame {
 				Text item=Temperature_house_Living valuecolor=[>28="red",>26="orange",>22="green",>18="teal",<=18="blue"]
@@ -19,16 +19,83 @@ sitemap myhome label="Основное меню"
 				Chart item=house_Living period=M refresh=3600 visibility=[Chart_Period==3]
 			}
 			}
-			Group item=house_Child
+			Group item=house_Child{
+				Frame {
+				Text item=Temperature_house_Child valuecolor=[>28="red",>26="orange",>22="green",>18="teal",<=18="blue"]
+				Text item=Humidity_house_Child valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Light_house_Child valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Motion_house_Child valuecolor=[0="green",1="red"]
+				Text item=house_Child_LastUpdate visibility=[house_Living_LastUpdate>30] valuecolor=[house_Living_LastUpdate>120="orange", house_Living_LastUpdate>300="red"]
+			}
+			Frame {
+				Switch item=Chart_Period label="" mappings=[0="Час", 1="День", 2="Неделя", 3="Месяц"]
+				Chart item=house_Child period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=house_Child period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=house_Child period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=house_Child period=M refresh=3600 visibility=[Chart_Period==3]
+			}
+			}
 				
-			Group item=house_Kitchen
+			Group item=house_Kitchen{
+				Frame {
+				Text item=Temperature_house_Kitchen valuecolor=[>28="red",>26="orange",>22="green",>18="teal",<=18="blue"]
+				Text item=Humidity_house_Kitchen valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Light_house_Kitchen valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Motion_house_Kitchen valuecolor=[0="green",1="red"]
+				Text item=house_Kitchen_LastUpdate visibility=[house_Living_LastUpdate>30] valuecolor=[house_Living_LastUpdate>120="orange", house_Living_LastUpdate>300="red"]
+			}
+			Frame {
+				Switch item=Chart_Period label="" mappings=[0="Час", 1="День", 2="Неделя", 3="Месяц"]
+				Chart item=house_Kitchen period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=house_Kitchen period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=house_Kitchen period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=house_Kitchen period=M refresh=3600 visibility=[Chart_Period==3]
+			}
+			}
 			
-			Group item=house_Corridor
+			Group item=house_Corridor{
+				Frame {
+				Text item=Temperature_house_Corridor valuecolor=[>28="red",>26="orange",>22="green",>18="teal",<=18="blue"]
+				Text item=Humidity_house_Corridor valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Light_house_Corridor valuecolor=[>70="blue",>60="green",>50="teal",<=40="red"]
+				Text item=Motion_house_Corridor valuecolor=[0="green",1="red"]
+				Text item=house_Corridor_LastUpdate visibility=[house_Living_LastUpdate>30] valuecolor=[house_Living_LastUpdate>120="orange", house_Living_LastUpdate>300="red"]
+			}
+			Frame {
+				Switch item=Chart_Period label="" mappings=[0="Час", 1="День", 2="Неделя", 3="Месяц"]
+				Chart item=house_Corridor period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=house_Corridor period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=house_Corridor period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=house_Corridor period=M refresh=3600 visibility=[Chart_Period==3]
+			}
+			}
 			
 			Group item=house_Toilet
 			
 			Group item=house_Balcon
 			
+			Group item=Chart_Period label="Графики" icon="line"{
+			Frame {
+				Switch item=Chart_Period label="" mappings=[0="Час", 1="День", 2="Неделя", 3="Месяц"]
+				Chart item=Temperature period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=Temperature period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=Temperature period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=Temperature period=M refresh=3600 visibility=[Chart_Period==3]
+				Chart item=Humidity period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=Humidity period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=Humidity period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=Humidity period=M refresh=3600 visibility=[Chart_Period==3]
+				Chart item=Light period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=Light period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=Light period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=Light period=M refresh=3600 visibility=[Chart_Period==3]
+				Chart item=Motion period=h refresh=600 visibility=[Chart_Period==0, Chart_Period=="NULL"]
+				Chart item=Motion period=D refresh=3600 visibility=[Chart_Period==1]
+				Chart item=Motion period=W refresh=3600 visibility=[Chart_Period==2]
+				Chart item=Motion period=M refresh=3600 visibility=[Chart_Period==3]
+			}
+			}
+			}
 			}
 			}
 		Frame {
